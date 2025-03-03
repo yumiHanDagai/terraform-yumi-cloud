@@ -17,6 +17,8 @@ provider "aws" {
 resource "aws_instance" "example" {
   ami           = "ami-09a73d1fbb2515f95"   # Amazon Linux AMI
   instance_type = "t2.micro"
+  subnet_id     = "subnet-07b73439a9be9b6b4"
+  vpc_security_group_ids = ["sg-0486a19418b7c4379"]     
   tags = {
     Name = "test-ec2-create-by-terraform-cloud"
   }
