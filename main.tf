@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-0d60652e0357ad94f"  # Amazon Linux AMI
+  ami           = "ami-0d60652e0357ad94f"   # Amazon Linux AMI
   instance_type = "t2.micro"
   tags = {
     Name = "test-ec2-create-by-terraform-cloud"
