@@ -12,25 +12,20 @@ on:
       - 'production'
 
 jobs:
-  terraform:
-    name: 'Terraform Plan/Apply'
+  terraform-deploy:
+    name: 'Terraform Deploy - ${{ matrix.module }}'
     runs-on: ubuntu-latest
     environment: ${{ contains(github.ref, 'staging') && 'stg' || 'prd' }}
-    
+    strategy:
+      matrix:
+        # 需要部署的模块
+        module: ['ec2/linux', 'ec2/windows', 'iam/user'，'iam/custompolicy']
+        
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Detect Merge Event
-        id: detect-merge
-        run: |
-          if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
-            echo "IS_VALID_MERGE=true" >> $GITHUB_ENV
-          else
-            echo "IS_VALID_MERGE=false" >> $GITHUB_ENV
-          fi
 
       - name: Determine Environment
         id: env
@@ -48,21 +43,23 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
 
       - name: Terraform Init
+        working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform init \
-            -backend-config="env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
+            -backend-config="../../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
 
       - name: Terraform Plan
-        if: ${{ env.IS_VALID_MERGE == 'true' }}
+        working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform plan \
-            -var-file="env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
+            -var-file="../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
             -input=false
 
       - name: Terraform Apply
-        if: ${{ env.IS_VALID_MERGE == 'true' }}
+        if: github.event.pull_request.merged == true
+        working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform apply \
             -auto-approve \
-            -var-file="env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
+            -var-file="../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
             -input=false
