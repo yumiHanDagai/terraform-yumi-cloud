@@ -2,32 +2,67 @@ name: Terraform Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'staging'
+      - 'production'
   pull_request:
-    branches: [ "main" ]
+    types: [closed]
+    branches:
+      - 'staging'
+      - 'production'
 
 jobs:
   terraform:
     name: 'Terraform Plan/Apply'
     runs-on: ubuntu-latest
-    environment: production
-
+    environment: ${{ contains(github.ref, 'staging') && 'stg' || 'prd' }}
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Merge Event
+        id: detect-merge
+        run: |
+          if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
+            echo "IS_VALID_MERGE=true" >> $GITHUB_ENV
+          else
+            echo "IS_VALID_MERGE=false" >> $GITHUB_ENV
+          fi
+
+      - name: Determine Environment
+        id: env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            echo "ENV=stg" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
+            echo "ENV=prd" >> $GITHUB_ENV
+          fi
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.7.5  # Žw’è”Å–{
+          terraform_version: 1.7.5
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
 
-      - name: Terraform Init & Plan
-        id: plan
+      - name: Terraform Init
         run: |
-          terraform init
-          terraform plan -input=false
+          terraform init \
+            -backend-config="env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
+
+      - name: Terraform Plan
+        if: ${{ env.IS_VALID_MERGE == 'true' }}
+        run: |
+          terraform plan \
+            -var-file="env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
+            -input=false
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        if: ${{ env.IS_VALID_MERGE == 'true' }}
+        run: |
+          terraform apply \
+            -auto-approve \
+            -var-file="env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
+            -input=false
