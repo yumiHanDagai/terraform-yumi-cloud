@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         # 需要部署的模块
-        module: ['ec2/linux', 'ec2/windows', 'iam/user'，'iam/custompolicy']
+        module: ['ec2/linux', 'ec2/windows', 'iam/user', 'iam/custompolicy']
         
     steps:
       - name: Checkout Code
