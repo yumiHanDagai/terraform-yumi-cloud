@@ -55,7 +55,6 @@ jobs:
             -input=false
 
       - name: Terraform Apply
-        if: github.event.pull_request.merged == true
         working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform apply \
