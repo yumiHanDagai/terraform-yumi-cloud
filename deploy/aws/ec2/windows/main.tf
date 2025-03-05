@@ -1,5 +1,3 @@
-variable "windows_instance_type" {}
-variable "windows_instance_name" {}
 resource "aws_instance" "windows_example" {
   ami           = "ami-01d033a4281b702a8"
   instance_type = var.windows_instance_type
