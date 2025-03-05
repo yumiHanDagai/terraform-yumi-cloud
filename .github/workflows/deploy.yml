@@ -27,15 +27,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine Environment
-        id: env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
-            echo "ENV=stg" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
-            echo "ENV=prd" >> $GITHUB_ENV
-          fi
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
