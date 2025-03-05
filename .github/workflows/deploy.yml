@@ -52,7 +52,6 @@ jobs:
         working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform plan \
-            -var-file="../../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
             -input=false
 
       - name: Terraform Apply
@@ -61,5 +60,4 @@ jobs:
         run: |
           terraform apply \
             -auto-approve \
-            -var-file="../../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
             -input=false
