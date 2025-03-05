@@ -46,13 +46,13 @@ jobs:
         working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform init \
-            -backend-config="../../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
+            -backend-config="../../../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
 
       - name: Terraform Plan
         working-directory: ./deploy/aws/${{ matrix.module }}
         run: |
           terraform plan \
-            -var-file="../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
+            -var-file="../../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
             -input=false
 
       - name: Terraform Apply
@@ -61,5 +61,5 @@ jobs:
         run: |
           terraform apply \
             -auto-approve \
-            -var-file="../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
+            -var-file="../../../../env/${{ env.ENV }}/${{ env.ENV }}.tfvars" \
             -input=false
