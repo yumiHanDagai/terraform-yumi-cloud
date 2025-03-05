@@ -1,6 +1,18 @@
-variable "linux_instance_type" {}
-variable "linux_instance_name" {}
-variable "windows_instance_type" {}
-variable "windows_instance_name" {}
-variable "user_name" {}
-variable "policy_name" {}
+variable "linux_instance_type" {
+  type = string
+}
+variable "linux_instance_name" {
+  type = string
+}
+variable "windows_instance_type" {
+  type = string
+}
+variable "windows_instance_name" {
+  type = string
+}
+variable "user_name" {
+  type = string
+}
+variable "policy_name" {
+  type = string
+}
