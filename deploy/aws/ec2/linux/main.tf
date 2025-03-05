@@ -1,5 +1,3 @@
-variable "linux_instance_type" {}
-variable "linux_instance_name" {}
 resource "aws_instance" "linux_example" {
   ami           = "ami-09a73d1fbb2515f95"
   instance_type = var.linux_instance_type
