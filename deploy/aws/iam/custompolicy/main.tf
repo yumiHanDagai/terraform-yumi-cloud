@@ -1,4 +1,3 @@
-variable "policy_name" {}
 resource "aws_iam_policy" "example" {
   name        = var.policy_name
   description = "Custom IAM policy"
