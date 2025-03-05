@@ -1,0 +1,3 @@
+workspaces { name = "terraform-yumi-cloud-prd" }
+hostname     = "app.terraform.io"
+organization = "yumigaizi-org"
