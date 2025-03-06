@@ -46,8 +46,7 @@ jobs:
       - name: Terraform Init
         working-directory: ./deploy/aws
         run: |
-          terraform init \
-            -backend-config="../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
+          terraform init
 
       - name: Terraform Plan
         working-directory: ./deploy/aws
