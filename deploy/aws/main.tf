@@ -19,22 +19,3 @@ module "iam_custompolicy" {
   source = "./iam/custompolicy"
   policy_name = var.policy_name
 }
-
-resource "aws_ec2_transit_gateway" "tgw" {
-  description                     = "Core Transit Gateway"
-  auto_accept_shared_attachments = "enable"
-}
-
-resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_attach" {
-  vpc_id             = "vpc-02e65ee117640d3c3" 
-  subnet_ids         = ["subnet-07b73439a9be9b6b4"] 
-  transit_gateway_id = aws_ec2_transit_gateway.tgw.id
-}
-
-resource "aws_vpc_endpoint" "s3_private" {
-  vpc_id            = "vpc-02e65ee117640d3c3"  
-  service_name      = "com.amazonaws.ap-northeast-1.s3"
-  vpc_endpoint_type = "Interface"
-  security_group_ids = ["sg-0477797d3a1998110"]    
-  private_dns_enabled = true                    
-}
