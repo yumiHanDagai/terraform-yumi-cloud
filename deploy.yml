@@ -1,0 +1,58 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - 'staging'
+      - 'production'
+  pull_request:
+    types: [closed]
+    branches:
+      - 'staging'
+      - 'production'
+
+jobs:
+  terraform-deploy:
+    name: 'Terraform Deploy'
+    runs-on: ubuntu-latest
+    environment: ${{ contains(github.ref, 'staging') && 'stg' || 'prd' }}
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Environment
+        id: env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            echo "ENV=stg" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
+            echo "ENV=prd" >> $GITHUB_ENV
+          fi
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.5
+          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+
+      - name: Terraform Init
+        working-directory: ./deploy/aws
+        run: |
+          terraform init \
+            -backend-config="../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
+
+      - name: Terraform Plan
+        working-directory: ./deploy/aws
+        run: |
+          terraform plan \
+            -input=false
+
+      - name: Terraform Apply
+        working-directory: ./deploy/aws
+        run: |
+          terraform apply \
+            -auto-approve \
+            -input=false
