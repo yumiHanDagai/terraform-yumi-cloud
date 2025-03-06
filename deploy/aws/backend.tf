@@ -1,0 +1,8 @@
+terraform {
+  backend "remote" {
+       workspaces = "terraform-yumi-cloud-stg"
+       hostname     = "app.terraform.io"
+       organization = "yumigaizi-org"
+       token = ${{ secrets.TF_CLOUD_TOKEN }}
+  }
+}
