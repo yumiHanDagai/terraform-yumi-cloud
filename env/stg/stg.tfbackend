@@ -1,3 +1,4 @@
-workspaces { name = "terraform-yumi-cloud-stg" }
+workspaces = "terraform-yumi-cloud-stg"
 hostname     = "app.terraform.io"
 organization = "yumigaizi-org"
+token = ${{ secrets.TF_CLOUD_TOKEN}}
