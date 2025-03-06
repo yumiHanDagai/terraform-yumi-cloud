@@ -33,7 +33,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "vpc_attach" {
 
 resource "aws_vpc_endpoint" "s3_private" {
   vpc_id            = "vpc-02e65ee117640d3c3"  
-  service_name      = "com.amazonaws.us-east-1.s3"
+  service_name      = "com.amazonaws.ap-northeast-1.s3"
   vpc_endpoint_type = "Interface"
   security_group_ids = ["sg-0477797d3a1998110"]    
   private_dns_enabled = true                    
