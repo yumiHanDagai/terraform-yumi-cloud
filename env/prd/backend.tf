@@ -4,7 +4,7 @@ terraform {
     organization = "yumigaizi-org"
 
     workspaces {
-      name = "terraform-yumi-cloud-stg"
+      name = "terraform-yumi-cloud-prd"
     }
   }
 }
