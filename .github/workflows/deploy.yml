@@ -15,16 +15,16 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> staging
 jobs:
   terraform-deploy:
-    name: 'Terraform Deploy - ${{ matrix.module }}'
+    name: 'Terraform Deploy'
     runs-on: ubuntu-latest
     environment: ${{ contains(github.ref, 'staging') && 'stg' || 'prd' }}
-    strategy:
-      matrix:
-        # 需要部署的模块
-        module: ['ec2/linux', 'ec2/windows', 'iam/user', 'iam/custompolicy']
-        
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -47,19 +47,18 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
 
       - name: Terraform Init
-        working-directory: ./deploy/aws/${{ matrix.module }}
+        working-directory: ./env/${{ env.ENV }}
         run: |
-          terraform init \
-            -backend-config="../../../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
+          terraform init
 
       - name: Terraform Plan
-        working-directory: ./deploy/aws/${{ matrix.module }}
+        working-directory: ./env/${{ env.ENV }}
         run: |
           terraform plan \
             -input=false
 
       - name: Terraform Apply
-        working-directory: ./deploy/aws/${{ matrix.module }}
+        working-directory: ./env/${{ env.ENV }}
         run: |
           terraform apply \
             -auto-approve \
