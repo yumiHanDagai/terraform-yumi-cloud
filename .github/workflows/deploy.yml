@@ -1,62 +1,39 @@
-name: Terraform Deploy
-
-env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+name: AWS CLI Validation
 
 on:
+  workflow_dispatch:  # 允许手动触发
   push:
-    branches:
-      - 'staging'
-      - 'production'
-  pull_request:
-    types: [closed]
-    branches:
-      - 'staging'
-      - 'production'
+    branches: [ "main" ]  # 推送到main分支时触发
 
 jobs:
-  terraform-deploy:
-    name: 'Terraform Deploy'
-    runs-on: ubuntu-latest
-    environment: ${{ contains(github.ref, 'staging') && 'stg' || 'prd' }}
+  validate-awscli:
+    runs-on: ubuntu-latest  # 推荐使用Linux环境
     
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    # 步骤1：检出代码（标准操作）
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Determine Environment
-        id: env
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
-            echo "ENV=stg" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/production" ]]; then
-            echo "ENV=prd" >> $GITHUB_ENV
-          fi
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-1
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.7.5
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+    # 步骤3：执行验证命令（示例命令）
+    - name: Test AWS CLI Connectivity
+      run: |
+        # 验证基础命令
+        aws sts get-caller-identity  # 确认凭证有效性
+        
+        # Glue相关测试（按需修改）
+        aws glue list-jobs --max-results 5  # 列出前5个Glue作业
+        
+        # S3测试（示例）
+        aws s3 ls s3://ndit-skillup-bedrock-video-trans-s3b  # 列出测试桶内容
 
-      - name: Terraform Init
-        working-directory: ./deploy/aws
-        run: |
-          terraform init \
-            -backend-config="../../env/${{ env.ENV }}/${{ env.ENV }}.tfbackend"
-
-      - name: Terraform Plan
-        working-directory: ./deploy/aws
-        run: |
-          terraform plan \
-            -input=false
-
-      - name: Terraform Apply
-        working-directory: ./deploy/aws
-        run: |
-          terraform apply \
-            -auto-approve \
-            -input=false
+    # 步骤4：清理资源（按需添加）
+    - name: Cleanup
+      if: always()  # 无论成功失败都执行
+      run: echo "清理临时文件..."
