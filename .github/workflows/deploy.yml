@@ -3,7 +3,7 @@ name: AWS CLI Validation
 on:
   workflow_dispatch:  # 允许手动触发
   push:
-    branches: [ "main" ]  # 推送到main分支时触发
+    branches: [ "feature_stg_001" ]  # 推送到main分支时触发
 
 jobs:
   validate-awscli:
