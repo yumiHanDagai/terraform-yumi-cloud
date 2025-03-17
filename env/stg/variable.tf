@@ -4,7 +4,7 @@ variable "linux_instance_type" {
 }
 variable "linux_instance_name" {
   type = string
-  default = "fail_linux_tfc"
+  default = "stg_linux_tfc"
 }
 variable "windows_instance_type" {
   type = string
@@ -12,13 +12,13 @@ variable "windows_instance_type" {
 }
 variable "windows_instance_name" {
   type = string
-  default = "fail_windows_tfc"
+  default = "stg_windows_tfc"
 }
 variable "user_name" {
   type = string
-  default = "fail_user"
+  default = "stg_user"
 }
 variable "policy_name" {
   type = string
-  default = "fail_policy"
+  default = "stg_policy"
 }
