@@ -27,9 +27,9 @@ variable "existing_bucket" {
 # 上传本地脚本到现有 S3 存储桶
 resource "aws_s3_object" "glue_script" {
   bucket = var.existing_bucket
-  key    = "scripts/glue-demo/script.py"
-  source = "${path.module}/scripts/script.py"
-  etag   = filemd5("${path.module}/scripts/script.py")
+  key    = "scripts/glue-demo/test_script.py"
+  source = "${path.module}/scripts/test_script.py"
+  etag   = filemd5("${path.module}/scripts/test_script.py")
 }
 
 # 精简版 Glue 执行角色
