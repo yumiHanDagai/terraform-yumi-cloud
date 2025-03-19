@@ -32,38 +32,9 @@ resource "aws_s3_object" "glue_script" {
   etag   = filemd5("${path.module}/scripts/test_script.py")
 }
 
-# 精简版 Glue 执行角色
-resource "aws_iam_role" "glue_role" {
-  name = "glue_demo_role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Effect = "Allow",
-      Principal = { Service = "glue.amazonaws.com" },
-      Action = "sts:AssumeRole"
-    }]
-  })
-
-  inline_policy {
-    name = "s3_access"
-    policy = jsonencode({
-      Version = "2012-10-17",
-      Statement = [{
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject"
-        ],
-        Resource = "arn:aws:s3:::${var.existing_bucket}/*"
-      }]
-    })
-  }
-}
-
 resource "aws_glue_job" "demo" {
   name         = "no_s3_creation_demo_job"
-  role_arn     = aws_iam_role.glue_role.arn
+  role_arn     = "arn:aws:iam::138184589409:role/service-role/AmazonSageMakerServiceCatalogProductsGlueRole"
   glue_version = "4.0"
 
   command {
