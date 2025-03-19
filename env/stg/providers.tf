@@ -9,7 +9,5 @@ terraform {
 }
 
 provider "aws" {
-  assume_role_with_web_identity {
-    role_arn          = "arn:aws:iam::138184589409:role/tfc-test-role-20250317"
-  }
+  region = "ap-northeast-1"
 }
