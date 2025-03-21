@@ -1,1 +1,1 @@
-print("AWS Glue Python Shell Job 执行成功2！")
+print("AWS Glue Python Shell Job success！")
